@@ -19,13 +19,14 @@ char velha[3][3] =
 int e = 0;
 bool XJogando = true;
 bool acabouJogo = false;
-int i = 0;
-int j = 2;
+int * i;
+int * j;
 int num = 0;
 int linha = 0;
 int coluna = 0;
 int posicaoEscolhida = 0;
 int posicaoEstaOcupada = 0;
+
 
 
 // protótipo da função
@@ -45,6 +46,7 @@ int main()
 	// Inicialize as variáveis!!
 	i = 0;
 	j = 2;
+	int * point;
 	num = 0;
 	
 	
@@ -76,7 +78,10 @@ int main()
     	}
 		else
 		{
-        	i,j = TraduzNumeroParaLinhaColunaVelha(posicaoEscolhida);
+			point = &i;
+			point = &j;
+        	point = TraduzNumeroParaLinhaColunaVelha(posicaoEscolhida);
+        	
         	if(XJogando == true)
             	velha[i][j]='X';
         	else
@@ -191,7 +196,7 @@ int DeuVelha(int i, int j)
     return true;
 }
 
-//funcao para traduzir o numero da posicao informado (1 a 9) retornando as coordenadas de linha e colunas
+//funcao para traduzir o numero da posicao informado (0 a 8) retornando as coordenadas de linha e colunas
 int TraduzNumeroParaLinhaColunaVelha(int num)
 {
     linha = num/3;
