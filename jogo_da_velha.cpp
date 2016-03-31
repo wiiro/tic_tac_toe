@@ -1,11 +1,12 @@
 #include <iostream>
-#include <istream>
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
+#include <graphics.h>
 
-// Se vc vai usar a mesma variável em diferentes escopos ( {} é um escopo) ou ela tem que ser global ou tem que 
-//  passar por parâmetro. Lembre-se de conversarmos sobre isso
+using namespace std;
+
 char velha[3][3] = 
 {
 		{' ', ' ', ' '},
@@ -13,47 +14,41 @@ char velha[3][3] =
 		{' ', ' ', ' '}
 };
 
+// Inicializacao das variaveis!
+bool XJogando = true;								//definir quem esta jogando
+bool acabouJogo = false;							//verifica se acabou o jogo
+int num = 0;										//variavel de controle
+int linha = 0;										//representa a coordenada X da velha
+int coluna = 0;										//representa a coodenada Y da velha
+int posicaoEscolhida = 0;							//verifica a posicao escolhida do usuario
+int posicaoEstaOcupada = 0;							//verifica se a posicao esta ocupada
 
-// Inicialize as variáveis!!
-
-int e = 0;
-bool XJogando = true;
-bool acabouJogo = false;
-int * i;
-int * j;
-int num = 0;
-int linha = 0;
-int coluna = 0;
-int posicaoEscolhida = 0;
-int posicaoEstaOcupada = 0;
-
-
-
-// protótipo da função
-int ExibeJogo (int i, int j); //mostrar o jogo da tela
-int AlguemVenceu (int i, int j); //verificar se existe vencedor na rodada
-int DeuVelha (int i, int j); //verificar se deu velha
-int TraduzNumeroParaLinhaColunaVelha(int num); //traduzir o numero inserido para linha/coluna 
-int PosicaoEstaOcupada(int num); //verificar se uma posicao esta ocupada
+// prototipo da funcao
+int ExibeJogo (int i, int j);						//mostrar o jogo da tela
+int AlguemVenceu (int i, int j);					//verificar se existe vencedor na rodada
+int DeuVelha ();									//verificar se deu velha
+void TraduzNumeroParaLinhaColunaVelha(int num);		//traduzir o numero inserido para linha/coluna 
+int PosicaoEstaOcupada(int num);					//verificar se uma posicao esta ocupada
 
 int main()
 {
-	int i, j, e;
+	int i, j;
 	int posicaoEscolhida, posicaoEstaOcupada;
 	bool XJogando = true;
 	bool acabouJogo = false;
 	
-	// Inicialize as variáveis!!
+	// Inicializacao as variaveis!!
 	i = 0;
 	j = 2;
 	int * point;
 	num = 0;
-	
-	
-	std::cout << "Jogo da Velha: Versao Jogador vs Jogador" << std::endl;
-	std::cout << "Quem começa o jogo eh sempre o jogador X"	<< std::endl;
 
-	int ExibeJogo(int i, int j);
+	std::cout << "Jogo da Velha: Versao Jogador vs Jogador" << std::endl;
+	std::cout << "Quem comeca o jogo eh sempre o jogador X"	<< std::endl;
+	
+	ExibeJogo(i,j);
+	
+	initwindow(400, 300);
 	
 	while(acabouJogo==false)
 	{
@@ -65,7 +60,7 @@ int main()
 		   {
         	std::cout << "Vez: Jogador O " << std::endl;
 			}
-		 	std::cout << "Escolha uma posicao de 0 a 8, representando cada espaço vazio do jogo: " << std::endl;
+		 	std::cout << "Escolha uma posicao de 0 a 8, representando cada espaco vazio do jogo: " << std::endl;
      		std::cin >> posicaoEscolhida;
     
 		if(posicaoEscolhida<0 or posicaoEscolhida>8)
@@ -78,18 +73,15 @@ int main()
     	}
 		else
 		{
-			point = &i;
-			point = &j;
-        	point = TraduzNumeroParaLinhaColunaVelha(posicaoEscolhida);
-        	
-        	if(XJogando == true)
-            	velha[i][j]='X';
+			TraduzNumeroParaLinhaColunaVelha(posicaoEscolhida);	
+				
+			if(XJogando == true)
+            	velha[linha][coluna]='X';
         	else
-            	velha[i][j]='O';
-        	int ExibeJogo(int i, int j);
-        	if(AlguemVenceu(i, j) == true)
+            	velha[linha][coluna]='O';
+        	if(AlguemVenceu(linha, coluna) == true)
 			{
-            	int acabouJogo = true;
+            	acabouJogo = true;
             	if(XJogando == true)
             	{
                 	std::cout << "Jogador X venceu." << std::endl;
@@ -101,7 +93,7 @@ int main()
 			}
 			else
 			{
-            	if(DeuVelha(i, j))
+            	if(DeuVelha())
             	{
                 	acabouJogo=true;
                 	std::cout << "Velha. Nao ha mais movimentos possiveis." << std::endl;
@@ -118,14 +110,12 @@ int main()
 					}    			
 				}
 			}    
-		}           		
+		}
+		ExibeJogo(i,j); //exibe o jogo após cada jogada
 	}
+	while (!kbhit()); //para o jogo nao encerrar após a a execucao do programa
 	
-	e = ExibeJogo(i,j);
-	//printf(e); procure ler sobre a função print, ela é um tanto mais complicada de se usar do que no python
-	
-	// Uma vez que vc incluiu o iostream, use o cout, é mais fácil
-	//std::cout << "e = " << e << std::endl;
+	return 0;
 }
 
 // funcao para exibir jogo
@@ -135,21 +125,16 @@ int ExibeJogo(int i, int j)
 	{
 		for(int c = 0; c < 3; c++)
 		{
-			//printf("%d ", velha[i][j]);
-			std::cout << " | " << velha[l][c] << " | ";
-			
+			std::cout << " | " << velha[l][c] << " | ";	
 		}
 		
 		// quebra a linha
 		std::cout << std::endl;
-
-		//return velha[i][j]; Com o return aqui ele só executaria o loop uma vez.
 	}
-	// o return deve estar aqui fora do primeiro for, se a intenção era imprimir apenas a primeira linha então ele sequer era necessário.
 	return velha[i][j];
 }
 
-//funcao para verificar se há vencedor
+//funcao para verificar se ha vencedor
 int AlguemVenceu(int i, int j)
 {
     //Verificação por linha
@@ -160,14 +145,14 @@ int AlguemVenceu(int i, int j)
             return true;
 		}
 	}
-	//Verificação por Coluna
+	//Verificacao por Coluna
     for(j = 0; j < 3; j++)
     {
         if (velha[0][j] == velha[1][j] && velha[1][j] == velha[2][j] && velha[0][j]!= ' ' )
         {
             return true;
         }
-    //Verificação por Diagonal
+    //Verificacao por Diagonal
     if (velha[0][0] == velha[1][1] && velha[1][1] == velha[2][2] && velha[0][0]!= ' ' )
     {
         return true;
@@ -180,14 +165,14 @@ int AlguemVenceu(int i, int j)
 	}	
 }
 
-//verificar se deu velha
-int DeuVelha(int i, int j)
+//Verificar se deu velha
+int DeuVelha()
 {
-    for(i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
     {
-        for(j = 0; j < 3; j++)
+        for(int j = 0; j < 3; j++)
         {
-            if(velha[i][j] == 0)
+            if(velha[i][j] == ' ')
             {
                 return false;
             }
@@ -197,17 +182,16 @@ int DeuVelha(int i, int j)
 }
 
 //funcao para traduzir o numero da posicao informado (0 a 8) retornando as coordenadas de linha e colunas
-int TraduzNumeroParaLinhaColunaVelha(int num)
+void TraduzNumeroParaLinhaColunaVelha(int num)
 {
     linha = num/3;
     coluna = num%3;
-    return linha,coluna;
 }
 
-//funcao para retornar se uma posicao está ocupada ou nao
+//funcao para retornar se uma posicao esta ocupada ou nao
 int PosicaoEstaOcupada(int num)
 {
-    linha,coluna = TraduzNumeroParaLinhaColunaVelha(num);
+    TraduzNumeroParaLinhaColunaVelha(num);
     if(velha[linha][coluna]== ' ')
     {	
         return false;
