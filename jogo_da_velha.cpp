@@ -30,6 +30,10 @@ int DeuVelha ();									//verificar se deu velha
 void TraduzNumeroParaLinhaColunaVelha(int num);		//traduzir o numero inserido para linha/coluna 
 int PosicaoEstaOcupada(int num);					//verificar se uma posicao esta ocupada
 
+void desenhaCampo();
+void desenhaO();
+void desenhaX();
+
 int main()
 {
 	int i, j;
@@ -46,9 +50,12 @@ int main()
 	std::cout << "Jogo da Velha: Versao Jogador vs Jogador" << std::endl;
 	std::cout << "Quem comeca o jogo eh sempre o jogador X"	<< std::endl;
 	
-	ExibeJogo(i,j);
+	//ExibeJogo(i,j);
 	
-	initwindow(400, 300);
+	initwindow(500, 500);
+	desenhaCampo();
+	//desenhaO();
+	//desenhaX();
 	
 	while(acabouJogo==false)
 	{
@@ -76,9 +83,15 @@ int main()
 			TraduzNumeroParaLinhaColunaVelha(posicaoEscolhida);	
 				
 			if(XJogando == true)
+			{
             	velha[linha][coluna]='X';
+					desenhaX();
+			}
         	else
+			{
             	velha[linha][coluna]='O';
+					desenhaO();
+			}
         	if(AlguemVenceu(linha, coluna) == true)
 			{
             	acabouJogo = true;
@@ -111,7 +124,7 @@ int main()
 				}
 			}    
 		}
-		ExibeJogo(i,j); //exibe o jogo após cada jogada
+		//ExibeJogo(i,j); //exibe o jogo após cada jogada
 	}
 	while (!kbhit()); //para o jogo nao encerrar após a a execucao do programa
 	
@@ -142,6 +155,8 @@ int AlguemVenceu(int i, int j)
 	{
         if (velha[i][0] == velha[i][1] && velha[i][1] == velha[i][2] && velha[i][0]!= ' ' )
         {
+			  setcolor (BLUE);
+			  line (100, (i*100)+150, 400, (i*100)+150);
             return true;
 		}
 	}
@@ -150,19 +165,26 @@ int AlguemVenceu(int i, int j)
     {
         if (velha[0][j] == velha[1][j] && velha[1][j] == velha[2][j] && velha[0][j]!= ' ' )
         {
+			  setcolor (BLUE);
+			  line ((j*100)+150, 100, (j*100)+150, 400);
             return true;
         }
+	}
     //Verificacao por Diagonal
     if (velha[0][0] == velha[1][1] && velha[1][1] == velha[2][2] && velha[0][0]!= ' ' )
     {
+		 setcolor (BLUE);
+		 line (100, 100, 400, 400);
         return true;
     }
     else if (velha[0][2] == velha[1][1] && velha[1][1] == velha[2][0] && velha[0][2]!= ' ' )
     {
+		 setcolor (BLUE);
+		 line (400, 100, 100, 400);
 	    return true;
     }
-	return false;
-	}	
+
+	 return false;
 }
 
 //Verificar se deu velha
@@ -200,4 +222,25 @@ int PosicaoEstaOcupada(int num)
 	{
         return true;
 	}
+}
+
+void desenhaCampo()
+{
+	line (100, 200, 400, 200);
+	line (100, 300, 400, 300);
+	line (200, 100, 200, 400);
+	line (300, 100, 300, 400);
+}
+
+void desenhaX()
+{
+  setcolor (RED);
+  line ((coluna*100)+125, (linha*100)+125, (coluna*100)+175, (linha*100)+175);
+  line ((coluna*100)+175, (linha*100)+125, (coluna*100)+125, (linha*100)+175);
+}
+
+void desenhaO()
+{
+	setcolor (YELLOW);
+   circle ((coluna*100)+150, (linha*100)+150, 25);
 }
